@@ -10,7 +10,6 @@ media
 docker-compose.yml
 .venv
 .env
-Dockerfile
 .idea
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
