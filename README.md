@@ -81,9 +81,9 @@ Notes:
 ## API Documentation
 
 Interactive docs:
-- Swagger UI: http://127.0.0.1:8000/api/docs/
-- ReDoc: http://127.0.0.1:8000/api/redoc/
-- OpenAPI schema: http://127.0.0.1:8000/api/schema/
+- Swagger UI: https://auth-service-app.up.railway.app/api/docs/
+- ReDoc: https://auth-service-app.up.railway.app/api/redoc/
+- OpenAPI schema: https://auth-service-app.up.railway.app/api/schema/
 
 These docs are generated automatically via OpenAPI/Swagger.
 
@@ -130,9 +130,9 @@ Base path: /api/auth/
 
 Example curl:
 - Login:
-  - curl -X POST http://127.0.0.1:8000/api/auth/login/ -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"password123"}'
+  - curl -X POST https://auth-service-app.up.railway.app/api/auth/login/ -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"password123"}'
 - Forgot password:
-  - curl -X POST http://127.0.0.1:8000/api/auth/forgot-password/ -H "Content-Type: application/json" -d '{"email":"user@example.com"}'
+  - curl -X POST https://auth-service-app.up.railway.app/api/auth/forgot-password/ -H "Content-Type: application/json" -d '{"email":"user@example.com"}'
 
 ---
 
@@ -161,10 +161,10 @@ If REDIS_URL is not set, the service falls back to in-memory cache.
 
 ## Deployment
 
-- Deployment URL: https://your-deployment.example.com
-  - Swagger UI: https://your-deployment.example.com/api/docs/
-  - ReDoc: https://your-deployment.example.com/api/redoc/
-  - Base API: https://your-deployment.example.com/api/auth/
+- Deployment URL: https://auth-service-app.up.railway.app
+  - Swagger UI: https://auth-service-app.up.railway.app/api/docs
+  - ReDoc: https://auth-service-app.up.railway.app/api/redoc/
+  - Base API: https://auth-service-app.up.railway.app/api/auth/
 
 Basic deployment checklist:
 - Set DEBUG=False
