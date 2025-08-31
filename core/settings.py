@@ -32,6 +32,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'you_canTry-ToGuessButCannot_getIt')
 DEBUG = os.getenv('DEBUG', False) == 'True'
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS').split(',') if os.getenv('DJANGO_ALLOWED_HOSTS') else []
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(',') if os.getenv('CORS_ALLOWED_ORIGINS') else []
 
 
 # Application definition
@@ -86,24 +87,27 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASS'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-    }
-}
-
 DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
-    DATABASES['default'] = dj_database_url.parse(DATABASE_URL, engine='django.db.backends.postgresql')
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, engine='django.db.backends.postgresql')
+
+    }
+else:
+    DATABASES = {
+        # 'default': {
+        #     'ENGINE': 'django.db.backends.sqlite3',
+        #     'NAME': BASE_DIR / 'db.sqlite3',
+        # }
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASS'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': os.getenv('DB_PORT'),
+        }
+    }
 
 REDIS_URL = os.getenv('REDIS_URL')
 
@@ -126,7 +130,6 @@ else:
 
 
 STORAGES = {
-    # ...
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
@@ -165,6 +168,8 @@ USE_TZ = True
 
 AUTH_USER_MODEL = 'users.User'
 
+RATELIMIT_USE_CACHE = 'default'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -186,6 +191,11 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
+
+SPECTACULAR_SETTINGS = {
+    "SERVERS": [{"url": "/"}],
+}
+
 
 # JWT Settings
 SIMPLE_JWT = {

@@ -2,8 +2,10 @@ import os
 import secrets
 import dotenv
 
+from django.core.cache import cache
 from rest_framework_simplejwt.tokens import RefreshToken
-from django_redis import get_redis_connection
+from django_redis import get_redis_connection, exceptions
+from redis.exceptions import ConnectionError
 
 
 dotenv.load_dotenv()
@@ -30,7 +32,7 @@ def get_tokens_for_user(user):
 
 def generate_password_reset_token(user_id):
     """
-    Generate a password reset token and store it in Redis.
+    Generate a password reset token and store it in Redis or Django Cache.
 
     Args:
         user_id: The ID of the user requesting password reset.
@@ -39,11 +41,12 @@ def generate_password_reset_token(user_id):
         str: The generated reset token.
     """
     token = secrets.token_urlsafe(32)
-    redis_conn = get_redis_connection("default")
 
-    # Store token with 10-minute expiry
-    redis_conn.setex(f"password_reset_{token}", int(os.getenv("PASSWORD_RESET_EXPIRY_SECONDS")), str(user_id))
-
+    try:
+        redis_conn = get_redis_connection("default")
+        redis_conn.setex(f"password_reset_{token}", int(os.getenv("PASSWORD_RESET_EXPIRY_SECONDS", 600)), str(user_id))
+    except (exceptions.ConnectionInterrupted, ConnectionError):
+        cache.set(f"password_reset_{token}", str(user_id), int(os.getenv("PASSWORD_RESET_EXPIRY_SECONDS", 600)))
     return token
 
 
@@ -57,6 +60,19 @@ def verify_password_reset_token(token):
     Returns:
         str: The user ID if token is valid, None otherwise.
     """
-    redis_conn = get_redis_connection("default")
-    user_id = redis_conn.get(f"password_reset_{token}")
-    return user_id.decode() if user_id else None
+    try:
+        redis_conn = get_redis_connection("default")
+        user_id = redis_conn.get(f"password_reset_{token}")
+        if user_id:
+            redis_conn.delete(f"password_reset_{token}")
+            return user_id.decode()
+        else:
+            return None
+    except (exceptions.ConnectionInterrupted, ConnectionError):
+        user_id = cache.get(f"password_reset_{token}")
+        if user_id:
+            cache.delete(f"password_reset_{token}")
+            return user_id
+        else:
+            return None
+
