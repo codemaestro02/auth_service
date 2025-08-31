@@ -162,7 +162,7 @@ If REDIS_URL is not set, the service falls back to in-memory cache.
 ## Deployment
 
 - Deployment URL: https://auth-service-app.up.railway.app
-  - Swagger UI: https://auth-service-app.up.railway.app/api/docs
+  - Swagger UI: https://auth-service-app.up.railway.app/api/docs/
   - ReDoc: https://auth-service-app.up.railway.app/api/redoc/
   - Base API: https://auth-service-app.up.railway.app/api/auth/
 
